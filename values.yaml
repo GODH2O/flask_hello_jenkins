@@ -39,15 +39,15 @@ controller:
     # -- Controller image registry
     registry: "docker.io"
     # -- Controller image repository
-    repository: "jenkins/jenkins"
+    repository: "bitnami/jenkins"
 
     # -- Controller image tag override; i.e., tag: "2.440.1-jdk21"
-    tag:
+    tag: latest
 
     # -- Controller image tag label
     tagLabel: jdk21
     # -- Controller image pull policy
-    pullPolicy: "Always"
+    pullPolicy: IfNotPresent
   # -- Controller image pull secret
   imagePullSecretName:
   # -- Lifecycle specification for controller-container
@@ -266,13 +266,15 @@ controller:
     startupProbe:
       # -- Set the failure threshold for the startup probe
       failureThreshold: 12
+      enable: true
+      initialDelaySeconds: 30
       httpGet:
         # -- Set the Pod's HTTP path for the startup probe
         path: '{{ default "" .Values.controller.jenkinsUriPrefix }}/login'
         # -- Set the Pod's HTTP port to use for the startup probe
         port: http
       # -- Set the time interval between two startup probes executions in seconds
-      periodSeconds: 10
+      periodSeconds: 30
       # -- Set the timeout for the startup probe in seconds
       timeoutSeconds: 5
 
@@ -285,14 +287,14 @@ controller:
         # -- Set the Pod's HTTP port to use for the liveness probe
         port: http
       # -- Set the time interval between two liveness probes executions in seconds
-      periodSeconds: 10
+      periodSeconds: 30
       # -- Set the timeout for the liveness probe in seconds
       timeoutSeconds: 5
 
       # If Startup Probe is not supported on your Kubernetes cluster, you might want to use "initialDelaySeconds" instead.
       # It delays the initial liveness probe while Jenkins is starting
       # -- Set the initial delay for the liveness probe in seconds
-      initialDelaySeconds:
+      initialDelaySeconds: 180
 
     readinessProbe:
       # -- Set the failure threshold for the readiness probe
@@ -303,14 +305,14 @@ controller:
         # -- Set the Pod's HTTP port to use for the readiness probe
         port: http
       # -- Set the time interval between two readiness probes executions in seconds
-      periodSeconds: 10
+      periodSeconds: 30
       # -- Set the timeout for the readiness probe in seconds
       timeoutSeconds: 5
 
       # If Startup Probe is not supported on your Kubernetes cluster, you might want to use "initialDelaySeconds" instead.
       # It delays the initial readiness probe while Jenkins is starting
       # -- Set the initial delay for the readiness probe in seconds
-      initialDelaySeconds:
+      initialDelaySeconds: 180
 
   # PodDisruptionBudget config
   podDisruptionBudget:
@@ -961,11 +963,11 @@ agent:
   jnlpregistry:
   image:
     # -- Registry to pull the agent jnlp image from
-    registry: ""
+    registry: docker.io
     # -- Repository to pull the agent jnlp image from
-    repository: "jenkins/inbound-agent"
+    repository: "bitnami/jenkins-agent"
     # -- Tag of the image to pull
-    tag: "3327.v868139a_d00e0-6"
+    tag: latest
   # -- Configure working directory for default agent
   workingDir: "/home/jenkins/agent"
   nodeUsageMode: "NORMAL"
@@ -1257,7 +1259,7 @@ persistence:
   # Requires persistence.enabled: true
   # If defined, PVC must be created manually before volume will be bound
   # -- Provide the name of a PVC
-  existingClaim:
+  existingClaim: ""
 
   # jenkins data Persistent Volume Storage Class
   # If defined, storageClassName: <storageClass>
@@ -1265,7 +1267,7 @@ persistence:
   # If undefined (the default) or set to null, no storageClassName spec is
   #   set, choosing the default provisioner (gp2 on AWS, standard on GKE, AWS & OpenStack)
   # -- Storage class for the PVC
-  storageClass:
+  storageClass: ""
   # -- Annotations for the PVC
   annotations: {}
   # -- Labels for the PVC
