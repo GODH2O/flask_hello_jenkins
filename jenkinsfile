@@ -1,13 +1,14 @@
 pipeline {
     agent {
         kubernetes {
-            label 'jenkins-agent-my-app'
+            label 'jenkins-agent-flask'
+            defaultContainer 'python'
             yaml """
 apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    component: ci
+    component: jenkins
 spec:
   containers:
   - name: python
@@ -20,13 +21,41 @@ spec:
     }
 
     stages {
-        stage('Test python') {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install dependencies') {
             steps {
                 container('python') {
+                    sh 'python -m pip install --upgrade pip'
                     sh 'pip install -r requirements.txt'
-                    sh 'python test.py'
                 }
             }
+        }
+
+        stage('Run Tests') {
+            steps {
+                container('python') {
+                    sh 'python -m unittest test.py'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            container('python') {
+                echo 'Pipeline terminé.'
+            }
+        }
+        success {
+            echo 'Tous les tests ont réussi !'
+        }
+        failure {
+            echo 'Certains tests ont échoué.'
         }
     }
 }
