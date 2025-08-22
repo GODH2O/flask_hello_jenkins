@@ -3,7 +3,7 @@ pipeline {
         kubernetes {
             label 'jenkins-agent-flask'
             defaultContainer 'python'
-            yaml """
+            yaml '''
 apiVersion: v1
 kind: Pod
 metadata:
@@ -16,17 +16,15 @@ spec:
     command:
     - cat
     tty: true
-"""
+'''
         }
     }
-
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
             }
         }
-
         stage('Install dependencies') {
             steps {
                 container('python') {
@@ -35,7 +33,6 @@ spec:
                 }
             }
         }
-
         stage('Run Tests') {
             steps {
                 container('python') {
@@ -44,12 +41,9 @@ spec:
             }
         }
     }
-
     post {
         always {
-            container('python') {
-                echo 'Pipeline terminé.'
-            }
+            echo 'Pipeline terminé.'
         }
         success {
             echo 'Tous les tests ont réussi !'
