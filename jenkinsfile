@@ -1,7 +1,6 @@
 pipeline {
     agent {
         kubernetes {
-            // Ce label sera le préfixe du nom du pod généré
             label 'jenkins-agent-my-app'
             yaml """
 apiVersion: v1
@@ -11,11 +10,11 @@ metadata:
     component: ci
 spec:
   containers:
-    - name: python
-      image: python:3.7
-      command:
-        - cat
-      tty: true
+  - name: python
+    image: python:3.7
+    command:
+    - cat
+    tty: true
 """
         }
     }
@@ -24,8 +23,8 @@ spec:
         stage('Test python') {
             steps {
                 container('python') {
-                    sh "pip install -r requirements.txt"
-                    sh "python test.py"
+                    sh 'pip install -r requirements.txt'
+                    sh 'python test.py'
                 }
             }
         }
