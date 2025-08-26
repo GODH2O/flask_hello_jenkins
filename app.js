@@ -10,3 +10,9 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+app.get('/feature/:name', (req, res) => {
+  const { name } = req.params;
+  res.send(`Hello feature ${name}!`);
+});
+
+export default app;
