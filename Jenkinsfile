@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'Node18'  // Nom defini dans la config Jenkins
+    }
 
     environment {
         DOCKER_IMAGE = "node_hello_app"   // Nom de l'image Docker
