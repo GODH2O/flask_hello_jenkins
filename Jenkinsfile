@@ -58,6 +58,17 @@ pipeline {
             }
         }
     }
+    stage('Deploy to Kubernetes') {
+    steps {
+        container('kubectl') {
+            sh """
+              kubectl apply -f kubernetes/deployment.yaml
+              kubectl apply -f kubernetes/service.yaml
+            """
+        }
+    }
+}
+
 
     post {
         always {
