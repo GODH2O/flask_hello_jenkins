@@ -5,6 +5,12 @@ pipeline {
         DOCKER_IMAGE = "node_hello_app"   // Nom de l'image Docker
         DOCKER_CONTAINER = "node_hello_container"
     }
+     triggers {
+        // Déclenche à chaque push GitHub (via webhook)
+        githubPush()
+        // Optionnel : vérifie le dépôt toutes les 5 minutes si pas de webhook
+        // pollSCM('H/5 * * * *')
+    }
 
     stages {
         stage('Checkout') {
